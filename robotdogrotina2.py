@@ -19,8 +19,8 @@ buzz = Buzzer()
 number=-1
 
 #while frame>0
-frame=3
-while frame>0: #valor arbitrariamente elevado (tão elevado quanto mais tempo durar a experiência (claro que podemos mudar e fazer com que pare aquando de um dado comando))
+frame=True
+while frame: #valor arbitrariamente elevado (tão elevado quanto mais tempo durar a experiência (claro que podemos mudar e fazer com que pare aquando de um dado comando))
 
     #number = clf.predict(#read a file here from EEG signals) #assumindo que as classificações vêm como "0,1,2,3,4" (se não, é só mudar)
     """if frame<1000:
@@ -80,19 +80,23 @@ while frame>0: #valor arbitrariamente elevado (tão elevado quanto mais tempo du
         
         if number==1: #If it classifies as 1, walk forward
             control.forWard() #one step forward
-            control.stop()
+            #control.stop()
+            print("forWard")
 
         if number==2: #walk backward
             control.backWard()
             control.stop()
+            print("backWard")
 
         if number==3: #raise height
             control.upAndDown(1) #este? Ou o postureBalance?
             control.stop()
+            print("upAndDown")
             
         if number==4: #lower height
             control.upAndDown(-1)
             control.stop()
+            print("upAndDown")
             
         #seria engraçado se uma das indicações mudasse as instruções
         #passando de frente e trás, para esquerda e direita.
