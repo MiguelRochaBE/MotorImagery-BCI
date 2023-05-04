@@ -39,7 +39,7 @@ while frame: #valor arbitrariamente elevado (tão elevado quanto mais tempo dura
         number=4"""
 
     #test insert number
-    number = input("Escreve:")
+    number = int(input("Escreve:"))
     print(number)
     print("\n")
 
