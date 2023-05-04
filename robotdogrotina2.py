@@ -43,7 +43,7 @@ while frame>0: #valor arbitrariamente elevado (tão elevado quanto mais tempo du
     print(number)
     print("\n")
 
-
+    '''
     if ultra.getDistance()<=0.3: #se a distância for inferior a 2(metros?)
         control.stop() #parar
         
@@ -70,8 +70,9 @@ while frame>0: #valor arbitrariamente elevado (tão elevado quanto mais tempo du
     else:
         #buzz.run(0) #para de ladrar
         alert=0 
-        
-
+     '''
+   
+    alert = 0
     if alert==0: #dog can move forward, when alert flag is 0
         
         if number==0: #If it classifies as 0, the robot is at rest
