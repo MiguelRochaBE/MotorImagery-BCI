@@ -19,8 +19,8 @@ buzz = Buzzer()
 number=-1
 
 #while frame>0
-frame=0
-while frame<50000: #valor arbitrariamente elevado (tão elevado quanto mais tempo durar a experiência (claro que podemos mudar e fazer com que pare aquando de um dado comando))
+frame=3
+while frame>0: #valor arbitrariamente elevado (tão elevado quanto mais tempo durar a experiência (claro que podemos mudar e fazer com que pare aquando de um dado comando))
 
     #number = clf.predict(#read a file here from EEG signals) #assumindo que as classificações vêm como "0,1,2,3,4" (se não, é só mudar)
     """if frame<1000:
@@ -96,8 +96,8 @@ while frame<50000: #valor arbitrariamente elevado (tão elevado quanto mais temp
         #seria engraçado se uma das indicações mudasse as instruções
         #passando de frente e trás, para esquerda e direita.
     control.stop()
-    frame+=1
-    time.sleep(0.1) #to be changed, depending on how the robot actually operates
+    #frame+=1
+    #time.sleep(0.1) #to be changed, depending on how the robot actually operates
 
 
 control.stop()
