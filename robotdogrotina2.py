@@ -50,8 +50,6 @@ while frame<50000: #valor arbitrariamente elevado (tão elevado quanto mais temp
         #impedir que continue a mover-se para a frente; só pode efetuar as restantes ações:
         if number==0: #If it classifies as 0, the robot is at rest
             control.stop()
-        
-        if number==1:
 
         if number==2: #walk backward
             control.backWard()
