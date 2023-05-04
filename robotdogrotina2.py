@@ -44,7 +44,7 @@ while frame<50000: #valor arbitrariamente elevado (tão elevado quanto mais temp
     print("\n")
 
 
-    if ultra.getDistance()<=2: #se a distância for inferior a 2(metros?)
+    if ultra.getDistance()<=0.3: #se a distância for inferior a 2(metros?)
         control.stop() #parar
         
         #impedir que continue a mover-se para a frente; só pode efetuar as restantes ações:
@@ -63,12 +63,12 @@ while frame<50000: #valor arbitrariamente elevado (tão elevado quanto mais temp
             control.upAndDown(-1)
             control.stop()
         
-        buzz.run(1) #começa a ladrar indefinidamente
+        #buzz.run(1) #começa a ladrar indefinidamente
         
         alert=1
     
     else:
-        buzz.run(0) #para de ladrar
+        #buzz.run(0) #para de ladrar
         alert=0 
         
 
