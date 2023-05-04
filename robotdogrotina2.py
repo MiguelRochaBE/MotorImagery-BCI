@@ -100,9 +100,9 @@ while frame: #valor arbitrariamente elevado (tão elevado quanto mais tempo dura
             
         #seria engraçado se uma das indicações mudasse as instruções
         #passando de frente e trás, para esquerda e direita.
-    control.stop()
+    #control.stop()
     #frame+=1
     #time.sleep(0.1) #to be changed, depending on how the robot actually operates
 
 
-control.stop()
+#control.stop()
