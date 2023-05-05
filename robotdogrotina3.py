@@ -8,14 +8,10 @@ Original file is located at
 """
 import socket
 import time
-from threading import Timer
-from Control import *
-from Ultrasonic import *
-from Buzzer import *
-import time
-from Control import *
-from Ultrasonic import *
-from Buzzer import *
+from Dog_Routines.threading import Timer
+from Dog_Routines.Control import *
+from Dog_Routines.Ultrasonic import *
+from Dog_Routines.Buzzer import *
 
 # Create object
 control = Control()
