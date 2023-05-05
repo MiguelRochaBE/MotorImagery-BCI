@@ -25,7 +25,7 @@ control.calibration()
 import socket
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind(("", 5000))
+s.bind(('', 5000))
 s.listen(1)
 print("Waiting for a connection...")
 
