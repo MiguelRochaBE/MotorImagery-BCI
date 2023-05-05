@@ -8,7 +8,7 @@ Original file is located at
 """
 import socket
 import time
-from Dog_Routines.threading import Timer
+from threading import Timer
 from Dog_Routines.Control import *
 from Dog_Routines.Ultrasonic import *
 from Dog_Routines.Buzzer import *
