@@ -19,14 +19,30 @@ ultra = Ultrasonic()
 buzz = Buzzer()
 number=-1
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect(("raspberrypi",5000))
+import socket
 
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind(("", 5000))
+s.listen(1)
+print("Waiting for a connection...")
+
+conn, addr = s.accept()
+print("Connected by", addr)
+
+while True:
+    data = conn.recv(1024)
+    if not data:
+        break
+    message = data.decode("utf-8")
+    print("Received message:", message)
+    response = "Thanks for your message: " + message
+    conn.send(response.encode("utf-8"))
+'''
 
 #while frame>0
 frame=True
 while frame: #valor arbitrariamente elevado (tão elevado quanto mais tempo durar a experiência (claro que podemos mudar e fazer com que pare aquando de um dado comando))
-    print(int(s.recv(1024).decode("utf-8")))
+    print(int(s.recv(1024).decode("utf-8")))'''
 
 
     """#number = clf.predict(#read a file here from EEG signals) #assumindo que as classificações vêm como "0,1,2,3,4" (se não, é só mudar)"""
