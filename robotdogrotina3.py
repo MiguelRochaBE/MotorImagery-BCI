@@ -24,11 +24,7 @@ buzz = Buzzer()
 number=-1
 
 
-# Create object
-control = Control()
-ultra = Ultrasonic()
-buzz = Buzzer()
-number=-1
+control.calibration()
 
 import socket
 
@@ -132,17 +128,27 @@ while frame: #valor arbitrariamente elevado (tão elevado quanto mais tempo dura
 
         if number==2: #walk backward
             control.backWard()
-            control.stop()
+            #control.stop()
             print("backWard")
 
         if number==3: #raise height
             control.upAndDown(1) #este? Ou o postureBalance?
-            control.stop()
+            #control.stop()
             print("upAndDown")
             
         if number==4: #lower height
             control.upAndDown(-1)
-            control.stop()
+            #control.stop()
+            print("upAndDown")
+
+        if number==5: #lower height
+            control.upAndDown(20)
+            #control.stop()
+            print("upAndDown")
+
+        if number==6: #lower height
+            control.upAndDown(-20)
+            #control.stop()
             print("upAndDown")
             
         #seria engraçado se uma das indicações mudasse as instruções
