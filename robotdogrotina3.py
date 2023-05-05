@@ -20,22 +20,14 @@ buzz = Buzzer()
 number=-1
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind(('', 5000))
-s.listen(5)
-print('Server is now running.')
+s.connect(("raspberrypi",5000))
 
-def background_controller():
-    message = 'Hello client'
-    print(message)
-    clientsocket.send(bytes(message, "utf-8"))
-    Timer(5, background_controller).start()
 
 #while frame>0
 frame=True
 while frame: #valor arbitrariamente elevado (tão elevado quanto mais tempo durar a experiência (claro que podemos mudar e fazer com que pare aquando de um dado comando))
-    clientsocket, address = s.accept()
-    print(f"Connection from (address) has been estabilished.")
-    background_controller()
+    print(int(s.recv(1024).decode("utf-8")))
+
 
     """#number = clf.predict(#read a file here from EEG signals) #assumindo que as classificações vêm como "0,1,2,3,4" (se não, é só mudar)"""
     """if frame<1000:
