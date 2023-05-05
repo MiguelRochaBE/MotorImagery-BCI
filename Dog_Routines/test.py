@@ -1,5 +1,5 @@
 import time
-from Led import *
+from Dog_Routines.Led import *
 led=Led()
 def test_Led():
     try:
@@ -32,7 +32,7 @@ def test_Led():
         led.colorWipe(led.strip, Color(0, 0, 0))   #turn off the light
         print ("\nEnd of program")
 
-from Ultrasonic import *
+from Dog_Routines.Ultrasonic import *
 ultrasonic=Ultrasonic()                
 def test_Ultrasonic():
     try:
@@ -43,7 +43,7 @@ def test_Ultrasonic():
     except KeyboardInterrupt:
         print ("\nEnd of program")
 
-from Servo import *
+from Dog_Routines.Servo import *
 servo=Servo()
 def test_Servo():
     try:

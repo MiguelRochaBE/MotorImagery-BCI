@@ -11,14 +11,14 @@ from picamera2.outputs import FileOutput
 from picamera2.encoders import Quality
 from threading import Condition
 import threading
-from Led import *
-from Servo import *
-from Thread import *
-from Buzzer import *
-from Control import *
-from ADS7830 import *
-from Ultrasonic import *
-from Command import COMMAND as cmd
+from Dog_Routines.Led import *
+from Dog_Routines.Servo import *
+from Dog_Routines.Thread import *
+from Dog_Routines.Buzzer import *
+from Dog_Routines.Control import *
+from Dog_Routines.ADS7830 import *
+from Dog_Routines.Ultrasonic import *
+from Dog_Routines.Command import COMMAND as cmd
 
 class StreamingOutput(io.BufferedIOBase):
     def __init__(self):

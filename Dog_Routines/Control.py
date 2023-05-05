@@ -4,11 +4,11 @@ import math
 import smbus
 import copy
 import threading
-from IMU import *
-from PID import *
+from Dog_Routines.IMU import *
+from Dog_Routines.PID import *
 import numpy as np
-from Servo import *
-from Command import COMMAND as cmd
+from Dog_Routines.Servo import *
+from Dog_Routines.Command import COMMAND as cmd
 
 class Control:
     def __init__(self):
