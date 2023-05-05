@@ -1,5 +1,5 @@
 #coding:utf-8
-from PCA9685 import PCA9685
+from  Dog_Routines.PCA9685 import PCA9685
 import time 
 class Servo:
     def __init__(self):
