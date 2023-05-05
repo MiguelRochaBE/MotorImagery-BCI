@@ -93,10 +93,10 @@ while frame: #valor arbitrariamente elevado (tão elevado quanto mais tempo dura
         if number==2: #walk backward
             control.backWard()
             #control.stop()
-            print("backWard")"""
+            print("backWard")
 
-        """if number==3: #raise height
-            control.upAndDown(1) #este? Ou o postureBalance?
+        if number==3: #raise height
+         control.upAndDown(1) #este? Ou o postureBalance?
             control.stop()
             print("upAndDown")
             
