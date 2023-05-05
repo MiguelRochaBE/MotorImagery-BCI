@@ -34,17 +34,25 @@ while True:
     data = conn.recv(1024)
     number = int(data.decode("utf-8"))
 
-    start_time=None
+    #start_time=None
 
     distance = ultra.getDistance()
-    if distance<=5 and start_time is None:
+    """if distance<=5: #and start_time is None:
         start_time=time.time()
         print('Passou!!!!')
         
-    elif distance > 5:
-        start_time = None
-        
+    #elif distance > 5:
+    #    start_time = None
+
     elif time.time() - start_time >=1:
+        print ("Distance less than 0.3 for 1 sec")
+        flag = flag+1
+        buzz.run(1)
+        time.sleep(200)
+        buzz.run(0)      
+        break"""
+
+    if distance <=5:
         print ("Distance less than 0.3 for 1 sec")
         flag = flag+1
         buzz.run(1)
@@ -52,7 +60,6 @@ while True:
         buzz.run(0)      
         break
 
-        
     if flag%2 == 0:
         if number==0: #If it classifies as 0, the robot is at rest
             control.stop()
@@ -70,7 +77,7 @@ while True:
             print("upAndDown")
             
         if number==4: #lower height
-            control.upAndDown(20)
+            control.upAndDown(-20)
             print("upAndDown")
     
     else:
