@@ -40,9 +40,10 @@ while True:
     if distance<=5 and start_time is None:
         start_time=time.time()
         print('Passou!!!!')
-        '''
+        
     elif distance > 5:
         start_time = None
+        
     elif time.time() - start_time >=1:
         print ("Distance less than 0.3 for 1 sec")
         flag = flag+1
@@ -51,7 +52,7 @@ while True:
         buzz.run(0)      
         break
 
-        '''
+        
     if flag%2 == 0:
         if number==0: #If it classifies as 0, the robot is at rest
             control.stop()
