@@ -66,7 +66,7 @@ while True:
         control.stop()
         print("upAndDown")
 
-    print("Received message:", message)
+    print("Received message:", number)
 
 
 #while frame>0
