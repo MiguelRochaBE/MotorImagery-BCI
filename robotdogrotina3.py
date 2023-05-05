@@ -58,6 +58,16 @@ while True:
         control.stop()
         print("upAndDown")
 
+    if number==5: #lower height
+            control.upAndDown(20)
+            #control.stop()
+            print("upAndDown")
+
+    if number==6: #lower height
+        control.upAndDown(-20)
+        #control.stop()
+        print("upAndDown")
+
     print("Received message:", number)
 
 
