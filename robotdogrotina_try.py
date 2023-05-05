@@ -39,6 +39,8 @@ while True:
     distance = ultra.getDistance()
     if distance<=5 and start_time is None:
         start_time=time.time()
+        print('Passou!!!!')
+        '''
     elif distance > 5:
         start_time = None
     elif time.time() - start_time >=1:
@@ -49,6 +51,7 @@ while True:
         buzz.run(0)      
         break
 
+        '''
     if flag%2 == 0:
         if number==0: #If it classifies as 0, the robot is at rest
             control.stop()
@@ -62,11 +65,11 @@ while True:
             print("backWard")
 
         if number==3: #raise height
-            control.upAndDown(50) #este? Ou o postureBalance?
+            control.upAndDown(20) #este? Ou o postureBalance?
             print("upAndDown")
             
         if number==4: #lower height
-            control.upAndDown(50)
+            control.upAndDown(20)
             print("upAndDown")
     
     else:
