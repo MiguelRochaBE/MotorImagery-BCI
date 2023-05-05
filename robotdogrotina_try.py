@@ -37,9 +37,9 @@ while True:
     start_time=None
 
     distance = ultra.getDistance()
-    if distance<=0.3 and start_time is None:
+    if distance<=5 and start_time is None:
         start_time=time.time()
-    elif distance > 0.3:
+    elif distance > 5:
         start_time = None
     elif time.time() - start_time >=1:
         print ("Distance less than 0.3 for 1 sec")
@@ -62,11 +62,11 @@ while True:
             print("backWard")
 
         if number==3: #raise height
-            control.upAndDown(1) #este? Ou o postureBalance?
+            control.upAndDown(50) #este? Ou o postureBalance?
             print("upAndDown")
             
         if number==4: #lower height
-            control.upAndDown(-1)
+            control.upAndDown(50)
             print("upAndDown")
     
     else:
