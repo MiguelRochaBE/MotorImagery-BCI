@@ -12,11 +12,13 @@ from threading import Timer
 from  Dog_Routines.Control import *
 from  Dog_Routines.Ultrasonic import *
 from  Dog_Routines.Buzzer import *
+from  Dog_Routines.Servo import *
 
 # Create object
 control = Control()
 ultra = Ultrasonic()
 buzz = Buzzer()
+servo = Servo()
 number=-1
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -48,7 +50,7 @@ while True:
         
     if distance <=20: #se estiver a menos de 20 centímetros de um obstáculo
         
-        buzz.run()
+        buzz.run(1)
         t0 = time.time()
         pode_sair = 0
         while distance <=5: #se algo estiver a menos de 5 centímetros do cão durante mais de um segundo, a flag muda
@@ -56,7 +58,7 @@ while True:
                 #print ("Distance less than 5 cm for over 1 sec")
                 flag = flag+1
                 #time.sleep(200) #ms
-                #buzz.run()
+                #buzz.run(1)
                 pode_sair=1
             distance = ultra.getDistance()
 
@@ -65,7 +67,11 @@ while True:
                 control.stop()
 
             if number==1: #If it classifies as 1, it won't walk forward; instead, it will nod in disagreement
-                control.forWard() #one step forward
+                servo.setServoAngle(15,161) #first rotate head to one side #acho que "15" é o servo da cabeça
+                time.sleep(1) #é preciso sleep?
+                servo.setServoAngle(15,19) #then rotate it to the other
+                time.sleep(1)
+                servo.setServoAngle(15,90) #then go back to standard position #não sei se 19, 161 e 90 estão bem
                 print("forWard")
 
             if number==2: #walk backward
@@ -166,3 +172,49 @@ while True:
         # Stop the robot
         control.order[0] = cmd.CMD_STOP
         control.run()
+        
+        
+import math
+from Control import *
+from Servo import *
+class Fidalction:
+    def __init__(self):
+        self.servo=Servo()
+        self.control=Control()
+        self.servo.setServoAngle(15,90)
+    def jump_dalgo(self):
+        xyz=[[0,50,0],[-100,23,0],[-100,23,0],[0,50,0]]
+        for i in range(4):
+            xyz[i][0]=(xyz[i][0]-self.control.point[i][0])/30
+            xyz[i][1]=(xyz[i][1]-self.control.point[i][1])/30
+            xyz[i][2]=(xyz[i][2]-self.control.point[i][2])/30
+        for j in range(30):
+            for i in range(4):
+                self.control.point[i][0]+=xyz[i][0]
+                self.control.point[i][1]+=xyz[i][1]
+                self.control.point[i][2]+=xyz[i][2]
+            self.control.run()
+            time.sleep(0.01)
+        for i in range(4):
+            for i in range(50,120,1):
+                self.control.point[0][1]=i
+                self.control.point[3][1]=i
+                self.control.run()
+                time.sleep(0.01)
+            for i in range(120,50,-1):
+                self.control.point[0][1]=i
+                self.control.point[3][1]=i
+                self.control.run()
+                time.sleep(0.01)
+        xyz=[[55,78,0],[55,78,0],[55,78,0],[55,78,0]]
+        for i in range(4):
+            xyz[i][0]=(xyz[i][0]-self.control.point[i][0])/30
+            xyz[i][1]=(xyz[i][1]-self.control.point[i][1])/30
+            xyz[i][2]=(xyz[i][2]-self.control.point[i][2])/30
+        for j in range(30):
+            for i in range(4):
+                self.control.point[i][0]+=xyz[i][0]
+                self.control.point[i][1]+=xyz[i][1]
+                self.control.point[i][2]+=xyz[i][2]
+            self.control.run()
+            time.sleep(0.01)
