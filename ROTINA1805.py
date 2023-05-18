@@ -38,14 +38,14 @@ downie=-2
 uppie2=20
 downie=-20
 
-#control.speed()
+control.speed = 5
 #control.
 
 #buzz.run(0) #certificar que o buzzer está desligado #USAR ESTE
 while True: 
-    time_beg=0
     data = conn.recv(1024)
     number = int(data.decode("utf-8"))
+    time_beg=time.time()
     
     distance = ultra.getDistance() #a distância é em centímetros (eles fazem pingTime * 340.0 / 2.0 /10000.0)
     # pingTime = (pulseTime = (time.time() - t0)*1000000); estando em us (time é em s)
