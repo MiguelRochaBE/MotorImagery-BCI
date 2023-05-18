@@ -11,7 +11,7 @@ import time
 from threading import Timer
 from  Dog_Routines.Control import *
 from  Dog_Routines.Ultrasonic import *
-from  Dog_Routines.Buzzer import *
+#from  Dog_Routines.Buzzer import *
 from  Dog_Routines.Servo import *
 
 # Create object
