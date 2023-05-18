@@ -38,7 +38,7 @@ downie=-2
 uppie2=20
 downie=-20
 
-control.speed("5")
+#control.speed()
 #control.
 
 #buzz.run(0) #certificar que o buzzer está desligado #USAR ESTE
