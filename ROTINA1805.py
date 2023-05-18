@@ -21,6 +21,8 @@ buzz = Buzzer()
 servo = Servo()
 number=-1
 
+buzz.run(0)
+
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind(('', 5000))
 s.listen(5)
@@ -36,9 +38,12 @@ downie=-2
 uppie2=20
 downie=-20
 
-buzz.run(0) #certificar que o buzzer está desligado
-while True: 
+control.speed(5)
+#control.
 
+#buzz.run(0) #certificar que o buzzer está desligado #USAR ESTE
+while True: 
+    time_beg=0
     data = conn.recv(1024)
     number = int(data.decode("utf-8"))
     
@@ -50,7 +55,7 @@ while True:
         
     if distance <=20: #se estiver a menos de 20 centímetros de um obstáculo
         
-        buzz.run(1)
+        #buzz.run(1) #USAR ESTE
         t0 = time.time()
         pode_sair = 0
         while distance <=5: #se algo estiver a menos de 5 centímetros do cão durante mais de um segundo, a flag muda
@@ -68,64 +73,81 @@ while True:
 
             if number==1: #If it classifies as 1, it won't walk forward; instead, it will nod in disagreement
                 servo.setServoAngle(15,161) #first rotate head to one side #acho que "15" é o servo da cabeça
-                time.sleep(1) #é preciso sleep?
+                #time.sleep(1) #é preciso sleep?
                 servo.setServoAngle(15,19) #then rotate it to the other
-                time.sleep(1)
+                #time.sleep(1)
                 servo.setServoAngle(15,90) #then go back to standard position #não sei se 19, 161 e 90 estão bem
-                print("forWard")
+                #print("forWard")
 
             if number==2: #walk backward
-                control.backWard()
-                print("backWard")
+                
+                while (time.time() - time_beg)<=2:
+                    control.backWard()
+                    #print("backWard")
+                control.stop()
 
             if number==3: #raise height
-                control.upAndDown(uppie) #este? Ou o postureBalance?
-                print("upAndDown")
+                
+                while (time.time() - time_beg)<=2:
+                    control.upAndDown(uppie) #este? Ou o postureBalance?
+                    print("upAndDown")
+                    
+                control.stop()
 
             if number==4: #lower height
-                control.upAndDown(downie)
-                print("upAndDown")
+                
+                while (time.time() - time_beg)<=2:
+                    control.upAndDown(downie)
+                    print("upAndDown")
+                control.stop()
 
         if flag%2 != 0: #se a flag for ímpar, tem um diferente conjunto de movimentos
             if number==0: #If it classifies as 0, the robot is at rest
-                control.stop()
+                
+                while (time.time() - time_beg)<=2:
+                    control.stop()
 
             if number==1: 
-                control.turnLeft() #one step forward
-                print("turnLeft")
+                while (time.time() - time_beg)<=2:
+                    control.turnLeft() #one step forward
+                    print("turnLeft")
+                control.stop()
 
             if number==2: #walk backward
-                control.turnRight()
-                print("turnRight")
+                while (time.time() - time_beg)<=2:
+                    control.turnRight()
+                    print("turnRight")
+                control.stop()
 
             if number==3: #raise height
-                control.upAndDown(uppie2) #este? Ou o postureBalance? Ou attitude?
-                print("upAndDown")
+                while (time.time() - time_beg)<=2:
+                    control.upAndDown(uppie2) #este? Ou o postureBalance? Ou attitude?
+                    print("upAndDown")
+                control.stop()
 
             if number==4: #lower height
-                control.upAndDown(downie2)
-                print("upAndDown")
+                while (time.time() - time_beg)<=2:
+                    control.upAndDown(downie2)
+                    print("upAndDown")
+                control.stop()
         
-        # Stop the robot
-        control.order[0] = cmd.CMD_STOP
-        control.run()
+#         # Stop the robot
+#         control.order[0] = cmd.CMD_STOP
+#         control.run()
         
             
     else: #se estiver a mais de 20 centímetros de um obstáculo (código praticamente igual a <20cm, mas agora com o forWard incluído)
-        buzz.run(0) #certificar que está calado
+        #buzz.run(0) #certificar que está calado #USAR ESTE
         
         if flag%2 == 0: #se a flag for par, tem um certo conjunto de movimentos
             if number==0: #If it classifies as 0, the robot is at rest
-                control.stop()
-                
-                #Tentar isto:
-                # Stop the robot
-                # control.order[0] = cmd.CMD_STOP
-                
-                #control.run()
+                while (time.time() - time_beg)<=2:
+                    control.stop()
                 
             if number==1: #If it classifies as 1, walk forward
-                control.forWard()
+                while (time.time() - time_beg)<=2:
+                    control.forWard()
+                control.stop()
                 
                 #Tentar isto:
                 # Set the command to move forward
@@ -134,47 +156,64 @@ while True:
                 # Start the robot
                 #control.run()
                 
-                time.sleep(2) #walk forward for 2 seconds
+                #time.sleep(2) #walk forward for 2 seconds
                 
-                print("forWard")
+                #print("forWard")
 
             if number==2: #walk backward
-                control.backWard()
-                print("backWard")
+                while (time.time() - time_beg)<=2:
+                    control.backWard()
+                    print("backWard")
+                control.stop()
+                    
 
             if number==3: #raise height
-                control.upAndDown(uppie) #este? Ou o postureBalance?
-                print("upAndDown")
-
-            if number==4: #lower height
-                control.upAndDown(downie)
-                print("upAndDown")
-    
-        if flag%2 != 0: #se a flag for ímpar, tem um diferente conjunto de movimentos
-            if number==0: #If it classifies as 0, the robot is at rest
+                while (time.time() - time_beg)<=2:
+                    control.upAndDown(uppie) #este? Ou o postureBalance?
+                    print("upAndDown")
                 control.stop()
 
-            if number==1: 
-                control.turnLeft()
-                print("turnLeft")
+            if number==4: #lower height
+                while (time.time() - time_beg)<=2:
+                    control.upAndDown(downie)
+                    print("upAndDown")
+                control.stop()
+    
+        if flag%2 != 0: #se a flag for ímpar, tem um diferente conjunto de movimentos
+            
+            if number==0: #If it classifies as 0, the robot is at rest
+                while (time.time() - time_beg)<=2:
+                    control.stop()
+
+            if number==1:
+                while (time.time() - time_beg)<=2:
+                    control.turnLeft()
+                    print("turnLeft")
+                control.stop()
 
             if number==2:
-                control.turnRight()
-                print("turnRight")
+                while (time.time() - time_beg)<=2:
+                    control.turnRight()
+                    print("turnRight")
+                control.stop()
 
             if number==3: #raise height
-                control.upAndDown(uppie2) #este? Ou o postureBalance?
-                print("upAndDown")
+                while (time.time() - time_beg)<=2:
+                    control.upAndDown(uppie2) #este? Ou o postureBalance?
+                    print("upAndDown")
+                control.stop()
 
             if number==4: #lower height
-                control.upAndDown(downie2)
-                print("upAndDown")
+                while (time.time() - time_beg)<=2:
+                    control.upAndDown(downie2)
+                    print("upAndDown")
+                control.stop()
                 
         # Stop the robot
         #control.order[0] = cmd.CMD_STOP
         #control.run()
-        control.stop()
-        
+        #control.stop()
+'''        
 import math
 from Control import *
 from Servo import *
@@ -219,3 +258,4 @@ class Fidalction:
                 self.control.point[i][2]+=xyz[i][2]
             self.control.run()
             time.sleep(0.01)
+'''
