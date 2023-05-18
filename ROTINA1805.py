@@ -17,11 +17,11 @@ from  Dog_Routines.Servo import *
 # Create object
 control = Control()
 ultra = Ultrasonic()
-buzz = Buzzer()
+#buzz = Buzzer()
 servo = Servo()
 number=-1
 
-buzz.run(1)
+#buzz.run(1)
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind(('', 5000))
