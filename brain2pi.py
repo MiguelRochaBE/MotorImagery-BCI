@@ -12,6 +12,28 @@ from brainflow.data_filter import DataFilter
 model = joblib.load('Model/MI_BCI_model.pkl')
 W = np.load('Model/Matrix_W.npy', allow_pickle=True)
 FeatVec_idx = np.load('Model/FeatVec_idx.npy', allow_pickle=True)
+band_idx = np.load('Model/band_idx.npy', allow_pickle=True)
+
+# Frequency bank 
+
+min_freq = 4
+max_freq = 40
+
+n_bands = int((max_freq - min_freq)/2)
+
+bands = []
+f1 = 4
+f2 = 8
+
+for i in range(1,n_bands):
+  bands.append([f1,f2])
+  f1+=2
+  f2+=2
+
+bands = [band for band, idx in zip(bands, band_idx) if idx]
+'''The zip() function returns a zip object,which is an iterator of tuples where the first item 
+in each passed iterator ispaired together, and then the second item in each passed iterator are 
+pairedtogether etc.'''
 
 # Data acquisition EEG
 
@@ -51,7 +73,7 @@ def main():
         while(True):
             # Variável com os dados da placa. 
             # O parâmetro define a quantidade de amostras a retirar do buffer. Neste caso retira as amostras de 1s 
-            data = board.get_board_data(sampling_rate*8)
+            data = board.get_board_data(sampling_rate*16)
 
             if keyboard.is_pressed('esc'): # Clicar no esc para parar o stream.
                 stopStream(board)
@@ -81,4 +103,31 @@ s.connect(("raspberrypi",5000))
 while True:
     message = input("Enter your message: ")
     s.send(message.encode("utf-8"))
-1
+
+
+
+# CSP functions
+
+def spatially_filter_EEG(W, EEG, n_comp):
+
+    Z = []
+    
+    W = np.delete(W, np.s_[n_comp:-n_comp:], 0)
+
+    for trial in range(len(EEG)):
+      Z.append( W @ np.squeeze(EEG[trial].T) )
+    
+
+    return Z
+
+def feat_vector(Z):
+    
+    feat = []
+    
+    for i in range(len(Z)):
+        var = np.var(Z[i], ddof=1, axis=1)
+        varsum = np.sum(var)
+        
+        feat.append(np.log10(var/varsum))
+        
+    return feat
