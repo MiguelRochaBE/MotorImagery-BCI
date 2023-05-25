@@ -112,14 +112,19 @@ def main():
             data = board.get_current_board_data(sampling_rate * sec)
 
             if int(elapsed_time) >= 5 and round(current_time, 1) % interval == 0:
+
+                bf_proc = time.time()
             
                 pred = pred_class(data[eeg_channels].T, feat_bandss, len(feat_bands), feat_idx, len(eeg_channels), W, n_comp, classes, model, numtaps, noise_freq, nyquist)
                 sum_probs = np.sum(pred,axis = 0)
                 c = np.argmax(sum_probs) + 1
 
-                message = input("Enter your message: ")
+                proc_time = time.time() - bf_proc
+
+                message = c
                 s.send(message.encode("utf-8"))
-    
+
+                print('Processing time: ', proc_time)
                 print('Label :' c)
 
             if keyboard.is_pressed('esc'): # Clicar no esc para parar o stream.
@@ -163,6 +168,12 @@ def feat_vector_rt(Z):
         
     return feat
 
+# Processamento
+
+def zero_pad_signal(signal, pad_amount):
+    padded_signal = np.pad(signal, ((pad_amount, pad_amount), (0, 0)), mode='constant')
+    return padded_signal
+
 def eeg_processing(args):
 
     # Filtragem do banco de frequências
@@ -182,8 +193,19 @@ def eeg_processing(args):
         #print(f"Retirar componente dos {noise_freq:.2f} Hz",)
     else:
         filt = firwin(numtaps, [lowcut/nyquist, highcut/nyquist], pass_zero=False)
+
+    # Zero Pad
+
+    filt_len = len(filt) * 3
+    data_len = len(data)
+
+    pad_amount = round((filt_len - data_len)/2) + 1 
+
+    data = zero_pad_signal(data, pad_amount)
   
-    filt_eeg = filtfilt(filt, 1, data, axis = 0,padlen = len(data[:,0])-1)
+    filt_eeg = filtfilt(filt, 1, data, axis = 0)
+
+    filt_eeg = filt_eeg[pad_amount:data_len + pad_amount, :]
 
     # CSP por classe
 
