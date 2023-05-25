@@ -46,6 +46,7 @@ while True:
     
     pode_sair = 0 #não pode andar
     t0_2 =time.time()
+    distance = ultra.getDistance()
     while distance <=5: #se algo estiver a menos de 5 centímetros do cão durante mais de um segundo, a flag muda/o paradigma altera
         t0 = time.time()
         if (time.time()-t0_2>=1) and pode_sair==0:
