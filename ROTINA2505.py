@@ -83,12 +83,14 @@ while True:
                 time.sleep(1)
                 servo.setServoAngle(15,90) #then go back to standard position #não sei se 19, 161 e 90 estão bem
                 print("Nod")
+                print("Distance ", distance)
 
             if number==2: #walk backward
                 
                 while (time.time() - time_beg)<=2: #garantir que se move durante 2 sec para dar tempo de processar EEG
                     control.backWard()
                     print("backWard")
+                    print("Distance ", distance)
                 control.stop()
 
             if number==3: #raise height
@@ -96,6 +98,7 @@ while True:
                 while (time.time() - time_beg)<=2:
                     control.upAndDown(uppie) #este? Ou o postureBalance?
                     print("upAndDown")
+                    print("Distance ", distance)
                     
                 control.stop()
 
@@ -104,6 +107,7 @@ while True:
                 while (time.time() - time_beg)<=2:
                     control.upAndDown(downie)
                     print("upAndDown")
+                    print("Distance ", distance)
                 control.stop()
 
         if flag%2 != 0: #se a flag for ímpar, tem um diferente conjunto de movimentos
@@ -112,29 +116,34 @@ while True:
                 while (time.time() - time_beg)<=2:
                     control.stop()
                     print("stop")
+                    print("Distance ", distance)
 
             if number==1: 
                 while (time.time() - time_beg)<=2:
                     control.turnLeft() #one step forward
                     print("turnLeft")
+                    print("Distance ", distance)
                 control.stop()
 
             if number==2: #walk backward
                 while (time.time() - time_beg)<=2:
                     control.turnRight()
                     print("turnRight")
+                    print("Distance ", distance)
                 control.stop()
 
             if number==3: #raise height
                 while (time.time() - time_beg)<=2:
                     control.upAndDown(uppie2) #este? Ou o postureBalance? Ou attitude?
                     print("upAndDown2")
+                    print("Distance ", distance)
                 control.stop()
 
             if number==4: #lower height
                 while (time.time() - time_beg)<=2:
                     control.upAndDown(downie2)
                     print("upAndDown2")
+                    print("Distance ", distance)
                 control.stop()
         
 #         # Stop the robot
@@ -151,11 +160,13 @@ while True:
                 while (time.time() - time_beg)<=2:
                     control.stop()
                     print("stop")
+                    print("Distance ", distance)
                 
             if number==1: #If it classifies as 1, walk forward
                 while (time.time() - time_beg)<=2:
                     control.forWard()
                     print("forWard")
+                    print("Distance ", distance)
                 control.stop()
                 
                 #Tentar isto:
@@ -173,6 +184,7 @@ while True:
                 while (time.time() - time_beg)<=2:
                     control.backWard()
                     print("backWard")
+                    print("Distance ", distance)
                 control.stop()
                     
 
@@ -180,12 +192,14 @@ while True:
                 while (time.time() - time_beg)<=2:
                     control.upAndDown(uppie) #este? Ou o postureBalance?
                     print("upAndDown")
+                    print("Distance ", distance)
                 control.stop()
 
             if number==4: #lower height
                 while (time.time() - time_beg)<=2:
                     control.upAndDown(downie)
                     print("upAndDown")
+                    print("Distance ", distance)
                 control.stop()
     
         if flag%2 != 0: #se a flag for ímpar, tem um diferente conjunto de movimentos
@@ -193,30 +207,35 @@ while True:
             if number==0: #If it classifies as 0, the robot is at rest
                 while (time.time() - time_beg)<=2:
                     print("stop")
+                    print("Distance ", distance)
                     control.stop()
 
             if number==1:
                 while (time.time() - time_beg)<=2:
                     control.turnLeft()
                     print("turnLeft")
+                    print("Distance ", distance)
                 control.stop()
 
             if number==2:
                 while (time.time() - time_beg)<=2:
                     control.turnRight()
                     print("turnRight")
+                    print("Distance ", distance)
                 control.stop()
 
             if number==3: #raise height
                 while (time.time() - time_beg)<=2:
                     control.upAndDown(uppie2) #este? Ou o postureBalance?
                     print("upAndDown2")
+                    print("Distance ", distance)
                 control.stop()
 
             if number==4: #lower height
                 while (time.time() - time_beg)<=2:
                     control.upAndDown(downie2)
                     print("upAndDown2")
+                    print("Distance ", distance)
                 control.stop()
                 
         # Stop the robot
