@@ -3,46 +3,30 @@ import keyboard
 import logging
 import numpy as np
 import joblib
+import time
 
 from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds
 from brainflow.data_filter import DataFilter
 
-# Model
+from scipy.signal import filtfilt, firwin, freqz
+import concurrent.futures
 
-model = joblib.load('Model/MI_BCI_model.pkl')
-W = np.load('Model/Matrix_W.npy', allow_pickle=True)
-FeatVec_idx = np.load('Model/FeatVec_idx.npy', allow_pickle=True)
-band_idx = np.load('Model/band_idx.npy', allow_pickle=True)
+# Conexão com raspberry pi
 
-# Frequency bank 
+try:
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect(("raspberrypi",5000))
+except Exception as e:          
+    print(f"Erro ao conectar com Raspberry Pi: {e}")
 
-min_freq = 4
-max_freq = 40
-
-n_bands = int((max_freq - min_freq)/2)
-
-bands = []
-f1 = 4
-f2 = 8
-
-for i in range(1,n_bands):
-  bands.append([f1,f2])
-  f1+=2
-  f2+=2
-
-bands = [band for band, idx in zip(bands, band_idx) if idx]
-'''The zip() function returns a zip object,which is an iterator of tuples where the first item 
-in each passed iterator ispaired together, and then the second item in each passed iterator are 
-pairedtogether etc.'''
-
-# Data acquisition EEG
+ # Aquisição brainflow
 
 board_id = BoardIds.CYTON_DAISY_BOARD.value
 
 BoardShim.enable_dev_board_logger()
 logging.basicConfig(level=logging.DEBUG) # Ativa as mensagens log do brainflow para fazer debug
 params = BrainFlowInputParams()
-params.serial_port = 'COM7' # Porta COM do BT dongle no PC
+params.serial_port = 'COM4' # Porta COM do BT dongle no PC
 channel_labels = ['C3','CP3','P3','PO3','P7','PO7','Fz','Cz','CPz','Pz','C4','CP4','P4','PO4','P8','PO8']
 
 '''
@@ -53,6 +37,49 @@ Protocol) protocol for reliable, stream-oriented communication.
 '''
 
 def main():
+
+    # Modelo
+
+    model = joblib.load('C:/Users/migue/OneDrive/Ambiente de Trabalho/EEG stuff/Motor Imagery/MotorImagery-BCI/Model/MI_BCI_model.pkl')
+    W = np.load('C:/Users/migue/OneDrive/Ambiente de Trabalho/EEG stuff/Motor Imagery/MotorImagery-BCI/Model/Matrix_W.npy', allow_pickle=True)
+    feat_idx = np.load('C:/Users/migue/OneDrive/Ambiente de Trabalho/EEG stuff/Motor Imagery/MotorImagery-BCI/Model/FeatVec_idx.npy', allow_pickle=True)
+    feat_bands = np.load('C:/Users/migue/OneDrive/Ambiente de Trabalho/EEG stuff/Motor Imagery/MotorImagery-BCI/Model/band_idx.npy', allow_pickle=True)
+    n_comp = 4
+
+    print()
+
+    # Classes
+
+    classes = {"rest/block": 1, 
+            "left_fist/block": 2,
+            "right_fist/block": 3, 
+            "both_fists/block": 4,
+            "both_feet/block": 5}
+
+    # Banco de frequências
+
+    fs = 125 # Hz
+    nyquist = fs/2
+
+    min_freq = 4
+    max_freq = 40
+
+    n_bands = int((max_freq - min_freq)/2)
+
+    bands = []
+    f1 = 4
+    f2 = 8
+
+    for i in range(1,n_bands):
+        bands.append([f1,f2])
+        f1+=2
+        f2+=2
+
+    feat_bandss = [band for count,band in enumerate(bands) if feat_bands[count] == True]
+
+    numtaps = 501 # Ordem
+    noise_freq = 25.213
+
     BoardShim.enable_dev_board_logger()
     logging.basicConfig(level=logging.DEBUG) # Ativa as mensagens log do brainflow para fazer debug
 
@@ -62,18 +89,38 @@ def main():
         board = BoardShim(board_id, params) # Inicialização da board
         board.prepare_session()
 
-        board.start_stream(450000) # O parâmetro corresponde ao tamanho do Buffer. O valor é o default do brainflow
+        board.start_stream(4500) # O parâmetro corresponde ao tamanho do Buffer. O valor é o default do brainflow
         
         eeg_channels = BoardShim.get_eeg_channels(board_id) # O brainflow adquire dados de várias coisas correspondentes a cada coluna de dados mas apenas 8/16 delas correspondem aos dados do EEG
         sampling_rate = BoardShim.get_sampling_rate(board_id)
         eeg_channels = eeg_channels[0:len(channel_labels)]
 
-        data = np.zeros((sampling_rate, len(eeg_channels)))
+        #data = np.zeros((sampling_rate, len(eeg_channels)))
+        sec = 4
 
+        interval = 5  # Time interval in seconds
+        start = time.time()
+    
         while(True):
+
+            current_time = time.time()
+            elapsed_time = current_time - start
+
             # Variável com os dados da placa. 
-            # O parâmetro define a quantidade de amostras a retirar do buffer. Neste caso retira as amostras de 1s 
-            data = board.get_board_data(sampling_rate*16)
+            # O parâmetro define a quantidade de amostras a retirar do buffer. Neste caso retira as amostras de 4s 
+
+            data = board.get_current_board_data(sampling_rate * sec)
+
+            if int(elapsed_time) >= 5 and round(current_time, 1) % interval == 0:
+            
+                pred = pred_class(data[eeg_channels].T, feat_bandss, len(feat_bands), feat_idx, len(eeg_channels), W, n_comp, classes, model, numtaps, noise_freq, nyquist)
+                sum_probs = np.sum(pred,axis = 0)
+                c = np.argmax(sum_probs) + 1
+
+                message = input("Enter your message: ")
+                s.send(message.encode("utf-8"))
+    
+                print('Label :' c)
 
             if keyboard.is_pressed('esc'): # Clicar no esc para parar o stream.
                 stopStream(board)
@@ -93,41 +140,119 @@ def stopStream(board): # Termina a sessão corretamente
         board.release_session()  
 
 
-if __name__ == '__main__':
-    main() 
+''' --------------------- Funções --------------------- '''
 
+# Funções CSP 
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect(("raspberrypi",5000))
+# CSP modificado para classificação em tempo real (1 trial)
 
-while True:
-    message = input("Enter your message: ")
-    s.send(message.encode("utf-8"))
+def spatially_filter_EEG_rt(W, EEG, n_comp):
 
-
-
-# CSP functions
-
-def spatially_filter_EEG(W, EEG, n_comp):
-
-    Z = []
-    
     W = np.delete(W, np.s_[n_comp:-n_comp:], 0)
 
-    for trial in range(len(EEG)):
-      Z.append( W @ np.squeeze(EEG[trial].T) )
+    Z = W @ EEG.T
     
-
     return Z
 
-def feat_vector(Z):
-    
-    feat = []
-    
-    for i in range(len(Z)):
-        var = np.var(Z[i], ddof=1, axis=1)
-        varsum = np.sum(var)
+def feat_vector_rt(Z):
+
+    var = np.var(Z, ddof=1, axis=1)
+    varsum = np.sum(var)
         
-        feat.append(np.log10(var/varsum))
+    feat = np.log10(var/varsum)
         
     return feat
+
+def eeg_processing(args):
+
+    # Filtragem do banco de frequências
+
+    data, band, n_bands, n_ch, W, n_comp, classes, numtaps, noise_freq, nyquist = args
+    
+    n_samples, _ = np.shape(data)
+    filt_eeg = np.zeros((n_bands, n_samples, n_ch))
+    
+    #print(f"Filtragem na banda de frequências: {band[0]} - {band[1]} Hz")
+
+    lowcut = band[0]   
+    highcut = band[1]
+
+    if band[0] == 22 or band[0] == 24:
+        filt = firwin(numtaps, [lowcut/nyquist, (noise_freq-0.7)/nyquist, (noise_freq+0.7)/nyquist, highcut/nyquist], pass_zero=False)
+        #print(f"Retirar componente dos {noise_freq:.2f} Hz",)
+    else:
+        filt = firwin(numtaps, [lowcut/nyquist, highcut/nyquist], pass_zero=False)
+  
+    filt_eeg = filtfilt(filt, 1, data, axis = 0,padlen = len(data[:,0])-1)
+
+    # CSP por classe
+
+    test_feat_vect = np.zeros((len(classes),n_comp*2))
+
+    for _, c_id in classes.items():
+            
+        Z_aux_test = spatially_filter_EEG_rt(W[c_id-1,:,:], filt_eeg, n_comp)
+        test_feat_vect[c_id-1,:] = (feat_vector_rt(Z_aux_test)) 
+
+
+    return test_feat_vect
+
+def conc_feat_vect(featVec, feat_bands, feat_idx, classes):
+
+    perClass_fV = np.zeros((len(classes),np.sum(feat_idx)))
+
+    for _, c_id in classes.items():
+        for band in range(1,len(feat_bands)):
+            if band == 1:
+                aux1_test = np.hstack((featVec[band-1][c_id-1], featVec[band][c_id-1])) #[:,0:n_comp]
+            else:
+                aux1_test = np.hstack((aux1_test,featVec[band][c_id-1])) #[:,0:n_comp]
+            
+        aux1_test = [aux1_test[i] for i in feat_idx if i ==1]
+        
+        perClass_fV[c_id-1,:] = aux1_test
+
+    return perClass_fV
+
+def pred_class(data, bands, n_bands, feat_idx, n_ch, W, n_comp, classes, model, numtaps, noise_freq, nyquist):
+    results = []
+    
+    with concurrent.futures.ThreadPoolExecutor(max_workers=None) as executor:
+        futures = []
+        for count, band in enumerate(bands):
+            args = (data, band, n_bands, n_ch, W[count], n_comp, classes, numtaps, noise_freq, nyquist)
+            future = executor.submit(eeg_processing, args)
+            futures.append(future)
+
+        for future in futures:
+            
+            try:
+                result = future.result()
+                results.append(result)
+                
+            except Exception as e:
+              
+                print(f"Exception in processing band: {e}")
+
+        c = np.zeros((len(classes),len(classes)))
+      
+        try:
+            perClass_fV = conc_feat_vect(results, bands, feat_idx, classes)
+
+            for _,c_id in classes.items():
+                c[c_id-1,0:len(classes)] = model.predict_proba(perClass_fV[c_id-1].reshape(1,-1))
+            
+            pred = c
+
+        except Exception as e:
+            pred = c
+            print(f"Exception in classifying {e}")
+
+    return pred
+
+
+''' --------------------- Funções --------------------- '''
+
+if __name__ == '__main__':
+
+    main() 
