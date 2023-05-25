@@ -47,6 +47,7 @@ while True:
     pode_sair = 0 #não pode andar
     t0_2 =time.time()
     distance = ultra.getDistance()
+
     while distance <=5: #se algo estiver a menos de 5 centímetros do cão durante mais de um segundo, a flag muda/o paradigma altera
         t0 = time.time()
         if (time.time()-t0_2>=1) and pode_sair==0:
@@ -63,12 +64,13 @@ while True:
     number = int(data.decode("utf-8"))
     time_beg=time.time()
 
-    distance = ultra.getDistance() #a distância é em centímetros (eles fazem pingTime * 340.0 / 2.0 /10000.0)
     # pingTime = (pulseTime = (time.time() - t0)*1000000); estando em us (time é em s)
     # 340 m/s é a velocidade do som
     # 2 é a dividir a distância ida e volta
     # 10000 = (1/1000000 [us para s]) * (100 [m para cm]); convertendo para cm
-        
+
+    distance = ultra.getDistance() #a distância é em centímetros (eles fazem pingTime * 340.0 / 2.0 /10000.0)    
+    
     if distance <=20: #se estiver a menos de 20 centímetros de um obstáculo -> POR PRECAUÇÃO, NÃO PODE ANDAR MAIS EM FRENTE
 
         buzz.run("1") #USAR ESTE
@@ -151,7 +153,6 @@ while True:
 #         control.order[0] = cmd.CMD_STOP
 #         control.run()
         
-            
     else: #se estiver a mais de 20 centímetros de um obstáculo (código praticamente igual a <20cm, mas agora com o forWard incluído)
         
         buzz.run("0") #certificar que está calado #USAR ESTE
