@@ -13,11 +13,9 @@ import concurrent.futures
 
 # Conexão com raspberry pi
 
-try:
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect(("raspberrypi",5000))
-except Exception as e:          
-    print(f"Erro ao conectar com Raspberry Pi: {e}")
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect(("raspberrypi",5000))
 
  # Aquisição brainflow
 
@@ -95,6 +93,8 @@ def main():
         sampling_rate = BoardShim.get_sampling_rate(board_id)
         eeg_channels = eeg_channels[0:len(channel_labels)]
 
+        print(eeg_channels)
+
         #data = np.zeros((sampling_rate, len(eeg_channels)))
         sec = 4
 
@@ -106,26 +106,25 @@ def main():
             current_time = time.time()
             elapsed_time = current_time - start
 
+            data = board.get_current_board_data(sampling_rate * sec)
+        
             # Variável com os dados da placa. 
             # O parâmetro define a quantidade de amostras a retirar do buffer. Neste caso retira as amostras de 4s 
-
-            data = board.get_current_board_data(sampling_rate * sec)
-
-            if int(elapsed_time) >= 5 and round(current_time, 1) % interval == 0:
-
+            if int(elapsed_time) >= 5 and round(elapsed_time, 1) % interval == 0:
+                
                 bf_proc = time.time()
             
                 pred = pred_class(data[eeg_channels].T, feat_bandss, len(feat_bands), feat_idx, len(eeg_channels), W, n_comp, classes, model, numtaps, noise_freq, nyquist)
-                sum_probs = np.sum(pred,axis = 0)
-                c = np.argmax(sum_probs) + 1
+    
+                c = np.sum(pred, axis = 1)
+                c = np.argmax(c)
 
-                proc_time = time.time() - bf_proc
-
-                message = c
+                message = str(c)
                 s.send(message.encode("utf-8"))
 
+                proc_time = time.time() - bf_proc
                 print('Processing time: ', proc_time)
-                print('Label :' c)
+                print('Label :', c+1)
 
             if keyboard.is_pressed('esc'): # Clicar no esc para parar o stream.
                 stopStream(board)
@@ -272,6 +271,20 @@ def pred_class(data, bands, n_bands, feat_idx, n_ch, W, n_comp, classes, model, 
 
     return pred
 
+
+def find_max_index(matrix):
+    max_value = float('-inf')
+    max_row = -1
+    max_col = -1
+
+    for row in range(len(matrix)):
+        for col in range(len(matrix[row])):
+            if matrix[row][col] > max_value:
+                max_value = matrix[row][col]
+                max_row = row
+                max_col = col
+
+    return max_row, max_col
 
 ''' --------------------- Funções --------------------- '''
 
