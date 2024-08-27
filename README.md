@@ -54,7 +54,7 @@ Otherwise (Default movement paradigm):
 
 **Results from acquired EEG:**
 
-The classifiers' training comprised 67 imagined movement trials per class while 17 trials (also per class) were used in the testing phase. The classifier bar plots compare the BCI performance according to the number of CSP components used to train and test the models. 
+The leading architecture was the SVM and the classifier's training comprised 67 imagined movement trials per class while 17 trials (also per class) were used in the testing phase. The classifier bar plots compare the BCI performance according to the number of CSP components used to train and test the models. 
 
 Training results:
 
